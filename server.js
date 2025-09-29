@@ -73,4 +73,4 @@ app.get('/countdown.png', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Countdown server running on http://localhost:${PORT}/countdown.png`);
-});
+})
