@@ -1,76 +1,88 @@
 const express = require('express');
 const { createCanvas, registerFont } = require('canvas');
+const GIFEncoder = require('gifencoder');
 const path = require('path');
 
 const app = express();
 
-// Registra il font Figtree
+// Registra il font Figtree (assicurati che il file sia nella stessa cartella!)
 registerFont(path.join(__dirname, 'Figtree-Regular.ttf'), { family: 'Figtree' });
 
-app.get('/countdown.png', (req, res) => {
+app.get('/countdown.gif', (req, res) => {
+  const width = 800;
+  const height = 300;
+  const encoder = new GIFEncoder(width, height);
+
+  res.setHeader('Content-Type', 'image/gif');
+  encoder.createReadStream().pipe(res);
+
+  encoder.start();
+  encoder.setRepeat(0); // infinito
+  encoder.setDelay(1000); // 1 fps
+  encoder.setQuality(10);
+
   const now = new Date();
-
-  // Prossima mezzanotte
-  const midnight = new Date(now);
+  const midnight = new Date();
   midnight.setHours(24, 0, 0, 0);
+  let diff = Math.floor((midnight - now) / 1000);
 
-  const diff = midnight - now;
-  const seconds = Math.floor(diff / 1000);
+  for (let i = 0; i < 60; i++) {
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
 
-  const d = String(Math.floor(seconds / (3600 * 24))).padStart(2, '0');
-  const h = String(Math.floor((seconds % (3600 * 24)) / 3600)).padStart(2, '0');
-  const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-  const s = String(seconds % 60).padStart(2, '0');
+    // sfondo blu
+    ctx.fillStyle = '#07038D';
+    ctx.fillRect(0, 0, width, height);
 
-  const values = [d, h, m, s];
-  const labels = ['giorni', 'ore', 'minuti', 'secondi'];
+    // calcolo countdown
+    const days = Math.floor(diff / 86400);
+    const hours = Math.floor((diff % 86400) / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+    const seconds = diff % 60;
 
-  const canvasWidth = 850;
-  const canvasHeight = 250;
-  const canvas = createCanvas(canvasWidth, canvasHeight);
-  const ctx = canvas.getContext('2d');
+    const values = [
+      String(days).padStart(2, '0'),
+      String(hours).padStart(2, '0'),
+      String(minutes).padStart(2, '0'),
+      String(seconds).padStart(2, '0'),
+    ];
 
-  // Sfondo blu
-  ctx.fillStyle = '#07038D';
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    const labels = ['Giorni', 'Ore', 'Minuti', 'Secondi'];
+    const sectionWidth = width / values.length;
 
-  // Imposta font per numeri
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = 'bold 72px Figtree';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
+    // Testo numeri
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.font = '80px Figtree';
 
-  const sectionWidth = canvasWidth / values.length;
-  const topPadding = 40;
-  const labelPadding = 150;
+    values.forEach((val, i) => {
+      const x = sectionWidth * i + sectionWidth / 2;
+      ctx.fillText(val, x, 80);
+    });
 
-  // Disegna numeri
-  values.forEach((val, i) => {
-    const x = sectionWidth * i + sectionWidth / 2;
-    ctx.fillText(val, x, topPadding);
-  });
+    // Etichette sotto
+    ctx.font = '24px Figtree';
+    labels.forEach((label, i) => {
+      const x = sectionWidth * i + sectionWidth / 2;
+      ctx.fillText(label, x, 180);
+    });
 
-  // Disegna i ":" tra i numeri
-  ctx.font = 'bold 72px Figtree';
-  for (let i = 0; i < values.length - 1; i++) {
-    const x = sectionWidth * (i + 1);
-    ctx.fillText(':', x, topPadding);
+    // Due punti ":" tra i blocchi (sopra le etichette)
+    ctx.font = '80px Figtree';
+    for (let i = 1; i < values.length; i++) {
+      const x = sectionWidth * i;
+      ctx.fillText(':', x, 80);
+    }
+
+    encoder.addFrame(ctx);
+    diff--;
   }
 
-  // Etichette
-  ctx.font = '24px Figtree';
-  labels.forEach((label, i) => {
-    const x = sectionWidth * i + sectionWidth / 2;
-    ctx.fillText(label, x, labelPadding);
-  });
-
-  // Output
-  res.setHeader('Content-Type', 'image/png');
-  canvas.pngStream().pipe(res);
+  encoder.finish();
 });
 
-// ✅ CHIUSURA SERVER (questa riga mancava nel tuo file)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Countdown server running on http://localhost:${PORT}/countdown.png`);
-})
+  console.log(`✅ Countdown server running on http://localhost:${PORT}/countdown.gif`);
+});
