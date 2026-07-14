@@ -25,7 +25,7 @@ app.get('/countdown.gif', (req, res) => {
   midnight.setHours(24, 0, 0, 0);
   let diff = Math.floor((midnight - now) / 1000);
 
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 10; i++) {
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
 
