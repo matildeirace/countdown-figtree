@@ -5,20 +5,19 @@ const path = require('path');
 
 const app = express();
 
-// Registra il font Figtree (assicurati che il file sia nella stessa cartella!)
 registerFont(path.join(__dirname, 'Figtree-Regular.ttf'), { family: 'Figtree' });
 
 app.get('/countdown.gif', (req, res) => {
-  const width = 800;
-  const height = 300;
+  const width = 600;
+  const height = 200;
   const encoder = new GIFEncoder(width, height);
 
   res.setHeader('Content-Type', 'image/gif');
   encoder.createReadStream().pipe(res);
 
   encoder.start();
-  encoder.setRepeat(0); // infinito
-  encoder.setDelay(1000); // 1 fps
+  encoder.setRepeat(0);
+  encoder.setDelay(1000);
   encoder.setQuality(10);
 
   const now = new Date();
@@ -30,11 +29,9 @@ app.get('/countdown.gif', (req, res) => {
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
 
-    // sfondo blu
-    ctx.fillStyle = '#07038D';
+    ctx.fillStyle = '#006FFF';
     ctx.fillRect(0, 0, width, height);
 
-    // calcolo countdown
     const days = Math.floor(diff / 86400);
     const hours = Math.floor((diff % 86400) / 3600);
     const minutes = Math.floor((diff % 3600) / 60);
@@ -50,29 +47,26 @@ app.get('/countdown.gif', (req, res) => {
     const labels = ['Giorni', 'Ore', 'Minuti', 'Secondi'];
     const sectionWidth = width / values.length;
 
-    // Testo numeri
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.font = '80px Figtree';
+    ctx.font = '64px Figtree';
 
     values.forEach((val, i) => {
       const x = sectionWidth * i + sectionWidth / 2;
-      ctx.fillText(val, x, 80);
+      ctx.fillText(val, x, 44);
     });
 
-    // Etichette sotto
-    ctx.font = '24px Figtree';
+    ctx.font = '18px Figtree';
     labels.forEach((label, i) => {
       const x = sectionWidth * i + sectionWidth / 2;
-      ctx.fillText(label, x, 180);
+      ctx.fillText(label, x, 125);
     });
 
-    // Due punti ":" tra i blocchi (sopra le etichette)
-    ctx.font = '80px Figtree';
-    for (let i = 1; i < values.length; i++) {
-      const x = sectionWidth * i;
-      ctx.fillText(':', x, 80);
+    ctx.font = '64px Figtree';
+    for (let j = 1; j < values.length; j++) {
+      const x = sectionWidth * j;
+      ctx.fillText(':', x, 44);
     }
 
     encoder.addFrame(ctx);
@@ -84,5 +78,5 @@ app.get('/countdown.gif', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Countdown server running on http://localhost:${PORT}/countdown.gif`);
+  console.log(`Countdown server running on http://localhost:${PORT}/countdown.gif`);
 });
