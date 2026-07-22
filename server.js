@@ -8,7 +8,7 @@ const app = express();
 registerFont(path.join(__dirname, 'Figtree-Regular.ttf'), { family: 'Figtree' });
 
 app.get('/countdown.gif', (req, res) => {
-  const width = 600;
+  const width = 480;
   const height = 120;
   const encoder = new GIFEncoder(width, height);
 
