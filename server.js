@@ -9,7 +9,7 @@ registerFont(path.join(__dirname, 'Figtree-Regular.ttf'), { family: 'Figtree' })
 
 app.get('/countdown.gif', (req, res) => {
   const width = 600;
-  const height = 150;
+  const height = 120;
   const encoder = new GIFEncoder(width, height);
 
   res.setHeader('Content-Type', 'image/gif');
@@ -49,23 +49,23 @@ app.get('/countdown.gif', (req, res) => {
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.font = '64px Figtree';
+    ctx.font = '48px Figtree';
 
     values.forEach((val, i) => {
       const x = sectionWidth * i + sectionWidth / 2;
-      ctx.fillText(val, x, 24);
+      ctx.fillText(val, x, 14);
     });
 
-    ctx.font = '18px Figtree';
+    ctx.font = '16px Figtree';
     labels.forEach((label, i) => {
       const x = sectionWidth * i + sectionWidth / 2;
-      ctx.fillText(label, x, 104);
+      ctx.fillText(label, x, 78);
     });
 
-    ctx.font = '64px Figtree';
+    ctx.font = '48px Figtree';
     for (let j = 1; j < values.length; j++) {
       const x = sectionWidth * j;
-      ctx.fillText(':', x, 24);
+      ctx.fillText(':', x, 14);
     }
 
     encoder.addFrame(ctx);
