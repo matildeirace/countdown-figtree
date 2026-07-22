@@ -21,8 +21,10 @@ app.get('/countdown.gif', (req, res) => {
   encoder.setQuality(10);
 
   const now = new Date();
-  const target = new Date('2026-07-23T23:59:00');
-  let diff = Math.max(0, Math.floor((target - now) / 1000));
+ const target = new Date();
+target.setHours(24, 0, 0, 0);
+let diff = Math.floor((target - now) / 1000);
+
 
   for (let i = 0; i < 10; i++) {
     const canvas = createCanvas(width, height);
