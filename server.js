@@ -48,7 +48,7 @@ let diff = Math.floor((target - now) / 1000);
     const labels = ['Giorni', 'Ore', 'Minuti', 'Secondi'];
     const sectionWidth = width / values.length;
 
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#1e1e1e';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.font = '48px Figtree';
