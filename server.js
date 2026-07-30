@@ -30,7 +30,7 @@ let diff = Math.floor((target - now) / 1000);
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = '#006FFF';
+    ctx.fillStyle = '#FFF773';
     ctx.fillRect(0, 0, width, height);
 
     const days = Math.floor(diff / 86400);
